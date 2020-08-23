@@ -1,0 +1,100 @@
+{
+  "name": "implicitparens",
+  "displayName": "ImplicitParens",
+  "description": "Show implied parentheses in JavaScript code",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.48.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "onLanguage:javascriptreact",
+    "onLanguage:typescriptreact"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "implicitparens.toggleParens",
+        "title": "Toggle Implicit Parentheses"
+      },
+      {
+        "command": "implicitparens.showParens",
+        "title": "Show Implicit Parentheses"
+      },
+      {
+        "command": "implicitparens.hideParens",
+        "title": "Hide Implicit Parentheses"
+      }
+    ],
+    "configuration": {
+      "title": "Implicit Parentheses",
+      "properties": {
+        "implicitparens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show implicit parentheses"
+        },
+        "implicitparens.parser": {
+          "type": "string",
+          "default": "TypeScript",
+          "description": "Parser to use",
+          "enum": [
+            "JavaScript",
+            "TypeScript",
+            "Flow"
+          ],
+          "enumDescriptions": [
+            "Babel Parser",
+            "Babel Parser with TypeScript enabled",
+            "Babel Parser with Flow enabled"
+          ]
+        }
+      }
+    },
+    "colors": [
+      {
+        "id": "implicitparens.parens",
+        "description": "Text color for the inserted parentheses",
+        "defaults": {
+          "dark": "#707070",
+          "light": "#999999",
+          "highContrast": "foreground"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "tsc -p ./",
+    "lint": "eslint src --ext ts",
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn run compile && yarn run lint",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.0.0",
+    "@types/node": "^14.0.27",
+    "@types/vscode": "^1.48.0",
+    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/parser": "^3.8.0",
+    "eslint": "^7.6.0",
+    "glob": "^7.1.6",
+    "mocha": "^8.0.1",
+    "typescript": "^3.8.3",
+    "vscode-test": "^1.4.0"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.11.4",
+    "@babel/traverse": "^7.11.0",
+    "@types/babel__traverse": "^7.0.13",
+    "@types/lodash": "^4.14.159",
+    "lodash": "^4.17.20"
+  },
+  "prettier": {}
+}
