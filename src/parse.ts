@@ -104,8 +104,20 @@ function babelOptions({
       "partialApplication",
       ["decorators", { decoratorsBeforeExport: false }],
       "privateIn",
-      ["moduleAttributes", { version: "may-2020" }],
-      ["recordAndTuple", { syntaxType: "hash" }],
+      [
+        "moduleAttributes",
+        {
+          // @ts-ignore
+          version: "may-2020",
+        },
+      ],
+      [
+        "recordAndTuple",
+        {
+          // @ts-ignore
+          syntaxType: "hash",
+        },
+      ],
       "decimal",
       "jsx",
       ...extraPlugins,

@@ -1,5 +1,7 @@
 # Show Implicit Parentheses (JavaScript)
 
+Clarify operator precedence by showing implicit parentheses as inline decorations.
+
 When reading complex expressions, it can be hard to understand how the subexpressions will be grouped. This extensions shows you how the sub expression are grouped by visually including the implicit parentheses as decorations.
 
 ## Command Pallet Commands
@@ -12,17 +14,22 @@ When reading complex expressions, it can be hard to understand how the subexpres
 
 This extension contributes the following settings:
 
-- `implicitparens.enabled`: enable/disable this extension
+- `Implicit Parentheses.Enable`: Show implicit parentheses
+- `Implicit Parentheses.Show in Menu Bar`: Show a button in the menu bar to show/hide implicit parentheses
+- `Implicit Parentheses.Parser Config`: Paser configuration to use
+- `Implicit Parentheses.Debounce Timeout`: Number of milliseconds that the plugin will wait after a file changes before it parses the file.
 
 ## TODO
 
 - [ ] Figure out how to configure colors
-- [ ] Set default color for light mode
 - [ ] Ensure plugin has name
+- [ ] Do we need to ignore non-js files?
+- [ ] Log to output when parse fails
 
 ## Possible Future Features
 
-- Enable/disable menu bar item in config
 - Allow user to configure which parens are shown
 - Provide automated fixes for adding parens, or even extracting expressions to variables.
 - Use the menu bar item to indicate if parsing has failed.
+- Suggest changing parser when we get a parse error that indicates we're using the wrong parser
+- Use Flow/Typescript parser when possible to get increpental parsing.

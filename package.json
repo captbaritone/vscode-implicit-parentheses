@@ -35,7 +35,7 @@
     "configuration": {
       "title": "Implicit Parentheses",
       "properties": {
-        "Implicit Parentheses.enable": {
+        "Implicit Parentheses.Enable": {
           "type": "boolean",
           "default": true,
           "description": "Show implicit parentheses"
@@ -45,10 +45,10 @@
           "default": true,
           "description": "Show a button in the menu bar to show/hide implicit parentheses"
         },
-        "Implicit Parentheses.parser": {
+        "Implicit Parentheses.Parser Config": {
           "type": "string",
           "default": "TypeScript",
-          "description": "Parser to use",
+          "description": "Parser configuration to use",
           "enum": [
             "JavaScript",
             "TypeScript",
