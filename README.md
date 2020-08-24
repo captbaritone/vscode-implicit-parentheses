@@ -14,10 +14,20 @@ When reading complex expressions, it can be hard to understand how the subexpres
 
 This extension contributes the following settings:
 
-- `Implicit Parentheses.Enable`: Show implicit parentheses
-- `Implicit Parentheses.Show in Menu Bar`: Show a button in the menu bar to show/hide implicit parentheses
-- `Implicit Parentheses.Parser Config`: Paser configuration to use
-- `Implicit Parentheses.Debounce Timeout`: Number of milliseconds that the plugin will wait after a file changes before it parses the file.
+- `implicitParentheses.enable`: Show implicit parentheses
+- `implicitParentheses.showInMenuBar`: Show a button in the menu bar to show/hide implicit parentheses
+- `implicitParentheses.parserConfig`: Paser configuration to use
+- `implicitParentheses.debounceTimeout`: Number of milliseconds that the plugin will wait after a file changes before it parses the file.
+
+The color of the parentheses can be configured via:
+
+```JSON
+{
+    "workbench.colorCustomizations": {
+        "implicitParentheses.parens": "#ff0000"
+    }
+}
+```
 
 ## TODO
 

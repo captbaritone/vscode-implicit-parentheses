@@ -1,8 +1,13 @@
 {
-  "name": "implicitparens",
-  "displayName": "ImplicitParens",
-  "description": "Show implied parentheses in JavaScript code",
+  "name": "implicit-parentheses",
+  "displayName": "Implicit Parentheses",
+  "description": "Clarify operator precedence by showing implicit parentheses as inline decorations",
+  "publisher": "JordanEldredge",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/captbaritone/vscode-implicit-parentheses.git"
+  },
   "engines": {
     "vscode": "^1.48.0"
   },
@@ -20,32 +25,32 @@
   "contributes": {
     "commands": [
       {
-        "command": "implicitparens.toggleParens",
+        "command": "implicitParentheses.toggleParens",
         "title": "Toggle Implicit Parentheses"
       },
       {
-        "command": "implicitparens.showParens",
+        "command": "implicitParentheses.showParens",
         "title": "Show Implicit Parentheses"
       },
       {
-        "command": "implicitparens.hideParens",
+        "command": "implicitParentheses.hideParens",
         "title": "Hide Implicit Parentheses"
       }
     ],
     "configuration": {
       "title": "Implicit Parentheses",
       "properties": {
-        "Implicit Parentheses.Enable": {
+        "implicitParentheses.enable": {
           "type": "boolean",
           "default": true,
           "description": "Show implicit parentheses"
         },
-        "Implicit Parentheses.Show in Menu Bar": {
+        "implicitParentheses.showInMenuBar": {
           "type": "boolean",
           "default": true,
           "description": "Show a button in the menu bar to show/hide implicit parentheses"
         },
-        "Implicit Parentheses.Parser Config": {
+        "implicitParentheses.parserConfig": {
           "type": "string",
           "default": "TypeScript",
           "description": "Parser configuration to use",
@@ -60,7 +65,7 @@
             "Babel Parser with Flow enabled"
           ]
         },
-        "Implicit Parentheses.Debounce Timeout": {
+        "implicitParentheses.debounceTimeout": {
           "type": "number",
           "default": 500,
           "description": "Number of milliseconds that the plugin will wait after a file changes before it parses the file."
@@ -69,7 +74,7 @@
     },
     "colors": [
       {
-        "id": "implicitparens.parens",
+        "id": "implicitParentheses.parens",
         "description": "Text color for the inserted parentheses",
         "defaults": {
           "dark": "#707070",
@@ -85,7 +90,8 @@
     "lint": "eslint src --ext ts",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/glob": "^7.1.3",
@@ -98,6 +104,7 @@
     "glob": "^7.1.6",
     "mocha": "^8.0.1",
     "typescript": "^3.8.3",
+    "vsce": "^1.78.0",
     "vscode-test": "^1.4.0"
   },
   "dependencies": {

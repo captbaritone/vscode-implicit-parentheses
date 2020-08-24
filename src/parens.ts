@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
 import { findParens } from "./parse";
 import { debounce, repeat } from "./utils";
-import { DEBOUNCE_CONFIG, PARSER_CONFIG } from "./constants";
+import { DEBOUNCE_CONFIG, PARSER_CONFIG, PAREN_COLOR_ID } from "./constants";
 import { ParserPlugin } from "@babel/parser";
 
 export function activateParens() {
   const subscriptions = [];
-  const parenColor = new vscode.ThemeColor("implicitparens.parens");
+  const parenColor = new vscode.ThemeColor(PAREN_COLOR_ID);
 
   const decorationType = vscode.window.createTextEditorDecorationType({
     after: {
