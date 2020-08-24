@@ -17,7 +17,6 @@
   "activationEvents": [
     "onLanguage:typescript",
     "onLanguage:javascript",
-    "onLanguage:flow",
     "onLanguage:javascriptreact",
     "onLanguage:typescriptreact"
   ],

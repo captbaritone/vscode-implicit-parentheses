@@ -31,10 +31,9 @@ The color of the parentheses can be configured via:
 
 ## TODO
 
-- [ ] Figure out how to configure colors
-- [ ] Ensure plugin has name
-- [ ] Do we need to ignore non-js files?
+- [ ] Hide menu bar item when no js files are visible?
 - [ ] Log to output when parse fails
+- [ ] Correctly handle case where config has been set at the language level.
 
 ## Possible Future Features
 

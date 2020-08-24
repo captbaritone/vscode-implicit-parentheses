@@ -1,7 +1,12 @@
 import * as vscode from "vscode";
 import { findParens } from "./parse";
 import { debounce, repeat } from "./utils";
-import { DEBOUNCE_CONFIG, PARSER_CONFIG, PAREN_COLOR_ID } from "./constants";
+import {
+  DEBOUNCE_CONFIG,
+  PARSER_CONFIG,
+  PAREN_COLOR_ID,
+  SUPPORTED_LANGUAGE_IDS,
+} from "./constants";
 import { ParserPlugin } from "@babel/parser";
 
 export function activateParens() {
@@ -79,6 +84,11 @@ function updateDecorations(
   editor: vscode.TextEditor,
   decorationType: vscode.TextEditorDecorationType
 ) {
+  const { languageId } = editor.document;
+  if (!SUPPORTED_LANGUAGE_IDS.has(languageId)) {
+    // TODO: Log
+    return;
+  }
   const parens = findParens(editor.document.getText(), getPlugins());
   if (parens === null) {
     return;
