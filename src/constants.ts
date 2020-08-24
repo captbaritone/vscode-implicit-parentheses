@@ -15,4 +15,5 @@ export const SUPPORTED_LANGUAGE_IDS = new Set([
   "javascriptreact",
   "typescript",
   "typescriptreact",
+  "flow",
 ]);
