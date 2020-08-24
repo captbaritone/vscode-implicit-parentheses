@@ -9,13 +9,43 @@ import {
   HIDE_COMMAND,
 } from "./constants";
 
+// Find the least specific target that has configured this setting.
+// TODO: Update this to handle language-specific configs.
+function getConfigurationType(
+  configuration: vscode.WorkspaceConfiguration,
+  key: string
+): vscode.ConfigurationTarget {
+  const config = configuration.inspect(key);
+  if (!config) {
+    return vscode.ConfigurationTarget.Global;
+  }
+  if (config.workspaceFolderValue !== undefined) {
+    return vscode.ConfigurationTarget.WorkspaceFolder;
+  } else if (config.workspaceValue !== undefined) {
+    return vscode.ConfigurationTarget.Workspace;
+  } else if (config.globalValue !== undefined) {
+    return vscode.ConfigurationTarget.Global;
+  }
+  return vscode.ConfigurationTarget.Global;
+}
+
 export function activateCommands(subscriptions: { dispose(): any }[]) {
   subscriptions.push(
     vscode.commands.registerCommand(SHOW_COMMAND, () => {
-      vscode.workspace.getConfiguration().update(ENABLED_CONFIG, true);
+      const config = vscode.workspace.getConfiguration();
+      config.update(
+        ENABLED_CONFIG,
+        true,
+        getConfigurationType(config, ENABLED_CONFIG)
+      );
     }),
     vscode.commands.registerCommand(HIDE_COMMAND, () => {
-      vscode.workspace.getConfiguration().update(ENABLED_CONFIG, false);
+      const config = vscode.workspace.getConfiguration();
+      config.update(
+        ENABLED_CONFIG,
+        false,
+        getConfigurationType(config, ENABLED_CONFIG)
+      );
     }),
     vscode.commands.registerCommand(TOGGLE_COMMAND, () => {
       const config = vscode.workspace.getConfiguration();
@@ -24,7 +54,7 @@ export function activateCommands(subscriptions: { dispose(): any }[]) {
       config.update(
         ENABLED_CONFIG,
         !config.get(ENABLED_CONFIG),
-        vscode.ConfigurationTarget.Workspace
+        getConfigurationType(config, ENABLED_CONFIG)
       );
     })
   );
