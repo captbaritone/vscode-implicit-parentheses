@@ -12,6 +12,7 @@
   "activationEvents": [
     "onLanguage:typescript",
     "onLanguage:javascript",
+    "onLanguage:flow",
     "onLanguage:javascriptreact",
     "onLanguage:typescriptreact"
   ],
@@ -34,12 +35,17 @@
     "configuration": {
       "title": "Implicit Parentheses",
       "properties": {
-        "implicitparens.enabled": {
+        "Implicit Parentheses.enable": {
           "type": "boolean",
           "default": true,
           "description": "Show implicit parentheses"
         },
-        "implicitparens.parser": {
+        "Implicit Parentheses.Show in Menu Bar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a button in the menu bar to show/hide implicit parentheses"
+        },
+        "Implicit Parentheses.parser": {
           "type": "string",
           "default": "TypeScript",
           "description": "Parser to use",
@@ -53,6 +59,11 @@
             "Babel Parser with TypeScript enabled",
             "Babel Parser with Flow enabled"
           ]
+        },
+        "Implicit Parentheses.Debounce Timeout": {
+          "type": "number",
+          "default": 500,
+          "description": "Number of milliseconds that the plugin will wait after a file changes before it parses the file."
         }
       }
     },

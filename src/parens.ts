@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { findParens } from "./parse";
 import { debounce, repeat } from "./utils";
-import { DEBOUNCE_TIME, PARSER_CONFIG } from "./constants";
+import { DEBOUNCE_CONFIG, PARSER_CONFIG } from "./constants";
 import { ParserPlugin } from "@babel/parser";
 
 export function activateParens() {
@@ -21,11 +21,13 @@ export function activateParens() {
 
   subscriptions.push(decorationType);
 
-  updateDecorations(decorationType);
+  for (const editor of vscode.window.visibleTextEditors) {
+    updateDecorations(editor, decorationType);
+  }
 
   const triggerUpdateDecorations = debounce(
-    () => updateDecorations(decorationType),
-    DEBOUNCE_TIME
+    (editor: vscode.TextEditor) => updateDecorations(editor, decorationType),
+    vscode.workspace.getConfiguration().get(DEBOUNCE_CONFIG)
   );
   subscriptions.push(
     new vscode.Disposable(() => triggerUpdateDecorations.cancel())
@@ -33,7 +35,10 @@ export function activateParens() {
 
   vscode.window.onDidChangeActiveTextEditor(
     () => {
-      triggerUpdateDecorations();
+      const activeEditor = vscode.window.activeTextEditor;
+      if (activeEditor !== undefined) {
+        triggerUpdateDecorations(activeEditor);
+      }
     },
     null,
     subscriptions
@@ -46,7 +51,7 @@ export function activateParens() {
         activeEditor !== undefined &&
         event.document === activeEditor.document
       ) {
-        triggerUpdateDecorations();
+        triggerUpdateDecorations(activeEditor);
       }
     },
     null,
@@ -70,13 +75,11 @@ function getPlugins(): ParserPlugin[] {
   }
 }
 
-function updateDecorations(decorationType: vscode.TextEditorDecorationType) {
-  const activeEditor = vscode.window.activeTextEditor;
-  if (!activeEditor) {
-    return;
-  }
-
-  const parens = findParens(activeEditor.document.getText(), getPlugins());
+function updateDecorations(
+  editor: vscode.TextEditor,
+  decorationType: vscode.TextEditorDecorationType
+) {
+  const parens = findParens(editor.document.getText(), getPlugins());
   if (parens === null) {
     return;
   }
@@ -98,13 +101,13 @@ function updateDecorations(decorationType: vscode.TextEditorDecorationType) {
 
   const paren = { before: "(", after: ")" };
 
-  activeEditor.setDecorations(
+  editor.setDecorations(
     decorationType,
     decorations.map(({ count, pos, beforeAfter }) => {
       return {
         range: new vscode.Range(
-          activeEditor.document.positionAt(pos),
-          activeEditor.document.positionAt(pos)
+          editor.document.positionAt(pos),
+          editor.document.positionAt(pos)
         ),
         renderOptions: {
           [beforeAfter]: { contentText: repeat(paren[beforeAfter], count) },

@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import { activateParens } from "./parens";
 import { activateMenuBarItem } from "./menuBarItem";
 import { activateCommands } from "./commands";
-import { ENABLED_CONFIG } from "./constants";
+import { ENABLED_CONFIG, DEBOUNCE_CONFIG, PARSER_CONFIG } from "./constants";
 
 // this method is called when vs code is activated
 export function activate(context: vscode.ExtensionContext) {
@@ -14,17 +14,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   let parens: vscode.Disposable | null = null;
   function updateParensEnabled() {
+    if (parens !== null) {
+      parens.dispose();
+    }
     if (vscode.workspace.getConfiguration().get(ENABLED_CONFIG)) {
-      if (parens === null) {
-        parens = activateParens();
-      } else {
-      }
+      parens = activateParens();
     } else {
-      if (parens !== null) {
-        parens.dispose();
-        parens = null;
-      } else {
-      }
+      parens = null;
     }
   }
 
@@ -39,7 +35,11 @@ export function activate(context: vscode.ExtensionContext) {
   updateParensEnabled();
   vscode.workspace.onDidChangeConfiguration(
     (event) => {
-      if (event.affectsConfiguration(ENABLED_CONFIG)) {
+      if (
+        event.affectsConfiguration(PARSER_CONFIG) ||
+        event.affectsConfiguration(ENABLED_CONFIG) ||
+        event.affectsConfiguration(DEBOUNCE_CONFIG)
+      ) {
         updateParensEnabled();
       }
     },

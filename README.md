@@ -16,9 +16,6 @@ This extension contributes the following settings:
 
 ## TODO
 
-- [ ] Ensure we can parse Flow and Typescript
-- [ ] Attempt to reparse on parser config change
-- [ ] Make config names human readable
 - [ ] Figure out how to configure colors
 - [ ] Set default color for light mode
 - [ ] Ensure plugin has name
@@ -28,3 +25,4 @@ This extension contributes the following settings:
 - Enable/disable menu bar item in config
 - Allow user to configure which parens are shown
 - Provide automated fixes for adding parens, or even extracting expressions to variables.
+- Use the menu bar item to indicate if parsing has failed.

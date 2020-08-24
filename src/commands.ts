@@ -24,8 +24,7 @@ export function activateCommands(subscriptions: { dispose(): any }[]) {
       config.update(
         ENABLED_CONFIG,
         !config.get(ENABLED_CONFIG),
-        // TODO: Should this affect the workspace instead?
-        true
+        vscode.ConfigurationTarget.Workspace
       );
     })
   );
