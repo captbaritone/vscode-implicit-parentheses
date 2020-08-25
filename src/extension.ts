@@ -5,7 +5,7 @@ import * as vscode from "vscode";
 import { activateParens } from "./parens";
 import { activateMenuBarItem } from "./menuBarItem";
 import { activateCommands } from "./commands";
-import { ENABLED_CONFIG, DEBOUNCE_CONFIG, PARSER_CONFIG } from "./constants";
+import { ENABLED_CONFIG, DEBOUNCE_CONFIG, USE_FLOW_CONFIG } from "./constants";
 
 // this method is called when vs code is activated
 export function activate(context: vscode.ExtensionContext) {
@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.workspace.onDidChangeConfiguration(
     (event) => {
       if (
-        event.affectsConfiguration(PARSER_CONFIG) ||
+        event.affectsConfiguration(USE_FLOW_CONFIG) ||
         event.affectsConfiguration(ENABLED_CONFIG) ||
         event.affectsConfiguration(DEBOUNCE_CONFIG)
       ) {

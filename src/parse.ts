@@ -119,7 +119,6 @@ function babelOptions({
         },
       ],
       "decimal",
-      "jsx",
       ...extraPlugins,
     ],
     tokens: true,

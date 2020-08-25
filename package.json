@@ -50,20 +50,10 @@
           "default": true,
           "description": "Show a button in the menu bar to show/hide implicit parentheses"
         },
-        "implicitParentheses.parserConfig": {
-          "type": "string",
-          "default": "TypeScript",
-          "description": "Parser configuration to use",
-          "enum": [
-            "JavaScript",
-            "TypeScript",
-            "Flow"
-          ],
-          "enumDescriptions": [
-            "Babel Parser",
-            "Babel Parser with TypeScript enabled",
-            "Babel Parser with Flow enabled"
-          ]
+        "implicitParentheses.useFlow": {
+          "type": "boolean",
+          "default": false,
+          "description": "Parse JavaScript files as Flow"
         },
         "implicitParentheses.debounceTimeout": {
           "type": "number",

@@ -6,7 +6,7 @@ export const HIDE_COMMAND = "implicitParentheses.hideParens";
 
 export const PAREN_COLOR_ID = "implicitParentheses.parens";
 export const ENABLED_CONFIG = "implicitParentheses.enable";
-export const PARSER_CONFIG = "implicitParentheses.parserConfig";
+export const USE_FLOW_CONFIG = "implicitParentheses.useFlow";
 export const DEBOUNCE_CONFIG = "implicitParentheses.debounceTimeout";
 export const MENU_BAR_CONFIG = "implicitParentheses.showInMenuBar";
 

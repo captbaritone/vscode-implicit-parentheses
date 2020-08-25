@@ -3,7 +3,7 @@ import { findParens } from "./parse";
 import { debounce, repeat } from "./utils";
 import {
   DEBOUNCE_CONFIG,
-  PARSER_CONFIG,
+  USE_FLOW_CONFIG,
   PAREN_COLOR_ID,
   SUPPORTED_LANGUAGE_IDS,
 } from "./constants";
@@ -66,17 +66,36 @@ export function activateParens() {
   return vscode.Disposable.from(...subscriptions);
 }
 
-function getPlugins(): ParserPlugin[] {
-  const configValue = vscode.workspace.getConfiguration().get(PARSER_CONFIG);
-  switch (configValue) {
-    case "TypeScript":
+// @ts-ignore `enums` are not yet included in the types.
+const FLOW_PLUGINS: ParserPluginWithOptions = [
+  [["flow", { all: true, enums: true }], "jsx"],
+];
+
+function getPlugins(languageId: string): ParserPlugin[] {
+  const useFlow = vscode.workspace.getConfiguration().get(USE_FLOW_CONFIG);
+  switch (languageId) {
+    case "typescript":
       return ["typescript"];
-    case "Flow":
-      return ["flow"];
-    case "JavaScript":
+    case "typescriptreact":
+      return ["typescript", "jsx"];
+    // The `flow` languageId is used interally at Facebook
+    case "flow":
+      // @ts-ignore `enums` are not yet included in the types.
+      return FLOW_PLUGINS;
+    case "javascriptreact":
+      if (useFlow) {
+        return FLOW_PLUGINS;
+      }
+      return ["jsx"];
+    case "javascript":
+      if (useFlow) {
+        return FLOW_PLUGINS;
+      }
       return [];
     default:
-      throw new Error(`Invalid config for parser: ${configValue}`);
+      // TODO: enforce this with types
+      console.warn(`Unexpected languageId: ${languageId}`);
+      return [];
   }
 }
 
@@ -89,7 +108,10 @@ function updateDecorations(
     // TODO: Log
     return;
   }
-  const parens = findParens(editor.document.getText(), getPlugins());
+  const parens = findParens(
+    editor.document.getText(),
+    getPlugins(editor.document.languageId)
+  );
   if (parens === null) {
     return;
   }
