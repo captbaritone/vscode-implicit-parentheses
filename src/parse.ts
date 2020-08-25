@@ -3,21 +3,22 @@ import traverse from "@babel/traverse";
 import { File as FileAST, Node } from "@babel/types";
 import { ParserOptions, ParserPlugin } from "@babel/parser";
 
-type ParenLocations = Map<number, number>;
-export type Parens = { open: ParenLocations; close: ParenLocations };
+type Locations = Map<number, number>;
+export type ParenLocations = { open: Locations; close: Locations };
 
 const CONFUSING = new Set([
   "BinaryExpression",
   "LogicalExpression",
   "UnaryExpression",
   "ConditionalExpression",
+  "AssignmentExpression",
 ]);
 
 export function findParens(
   text: string,
   languageId: string,
   useFlow: boolean
-): { open: ParenLocations; close: ParenLocations } | null {
+): ParenLocations {
   const openParens: number[] = [];
   const closeParens: number[] = [];
 
@@ -29,15 +30,26 @@ export function findParens(
     closeParens.push(node.end);
   }
 
-  let ast;
-  try {
-    ast = parser.parse(text, babelOptions({ languageId, useFlow }));
-  } catch (e) {
-    return null;
-  }
+  const ast = parser.parse(text, babelOptions({ languageId, useFlow }));
 
-  const ASSOCIATIVE_BINARY_OPERATORS = new Set(["+", "*", "&", "|"]);
-  const ASSOCIATIVE_LOGICAL_OPERATORS = new Set(["||", "&&", "??"]);
+  const RIGHT_TO_LEFT_ASSOCIATIVE_OPERATORS = new Set([
+    "**",
+    "=",
+    "+=",
+    "-=",
+    "%=",
+    "**=",
+    "*=",
+    "<<=",
+    ">>=",
+    ">>>=",
+    "&=",
+    "^=",
+    "|=",
+    "&&=",
+    "||=",
+    "??=",
+  ]);
 
   traverse(ast, {
     enter(path) {
@@ -45,24 +57,23 @@ export function findParens(
         // People can figure these out probably
         return;
       }
-      if (isUnaryNot(path.node) && isUnaryNot(path.parent)) {
-        // !! is an idiom that people can figure out
-        return;
-      }
-      if (
-        path.node.type === path.parent.type &&
-        // @ts-ignore
-        path.node.operator === path.parent.operator
-      ) {
+      if (path.node.type === path.parent.type) {
         if (
-          (path.node.type === "BinaryExpression" &&
-            ASSOCIATIVE_BINARY_OPERATORS.has(path.node.operator)) ||
-          (path.node.type === "LogicalExpression" &&
-            ASSOCIATIVE_LOGICAL_OPERATORS.has(path.node.operator))
+          // @ts-ignore
+          path.node.operator !== undefined &&
+          // @ts-ignore
+          path.node.operator === path.parent.operator &&
+          // @ts-ignore
+          !RIGHT_TO_LEFT_ASSOCIATIVE_OPERATORS.has(path.node.operator)
         ) {
+          // Here the presedence is obvisouly the same, and people can
+          // infer left-to-right associativity.
           return;
         }
+      } else if (path.parent.type === "AssignmentExpression") {
+        return;
       }
+
       addParens(path.node);
     },
   });
@@ -113,10 +124,6 @@ function groupLineNumbers(numbers: number[]) {
     counts.set(num, (current ?? 0) + 1);
   });
   return counts;
-}
-
-function isUnaryNot(node: Node) {
-  return node.type === "UnaryExpression" && node.operator === "!";
 }
 
 // Stolen from Prettier: https://github.com/prettier/prettier/blob/797e93fc0a3a7f2ba2b510a1a246fc6bdbe89025/src/language-js/parser-babel.js#L18-L41

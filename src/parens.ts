@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { findParens } from "./parse";
+import { findParens, ParenLocations } from "./parse";
 import { debounce, repeat } from "./utils";
 import {
   DEBOUNCE_CONFIG,
@@ -7,7 +7,6 @@ import {
   PAREN_COLOR_ID,
   SUPPORTED_LANGUAGE_IDS,
 } from "./constants";
-import { ParserPlugin } from "@babel/parser";
 
 export function activateParens() {
   const subscriptions = [];
@@ -27,12 +26,18 @@ export function activateParens() {
 
   subscriptions.push(decorationType);
 
+  const outputChannel = vscode.window.createOutputChannel(
+    "Implicit Parentheses"
+  );
+  subscriptions.push(outputChannel);
+
   for (const editor of vscode.window.visibleTextEditors) {
-    updateDecorations(editor, decorationType);
+    updateDecorations(editor, decorationType, outputChannel);
   }
 
   const triggerUpdateDecorations = debounce(
-    (editor: vscode.TextEditor) => updateDecorations(editor, decorationType),
+    (editor: vscode.TextEditor) =>
+      updateDecorations(editor, decorationType, outputChannel),
     vscode.workspace.getConfiguration().get(DEBOUNCE_CONFIG)
   );
   subscriptions.push(
@@ -57,7 +62,14 @@ export function activateParens() {
         activeEditor !== undefined &&
         event.document === activeEditor.document
       ) {
-        triggerUpdateDecorations(activeEditor);
+        const { languageId } = activeEditor.document;
+        if (SUPPORTED_LANGUAGE_IDS.has(languageId)) {
+          triggerUpdateDecorations(activeEditor);
+        } else {
+          outputChannel.appendLine(
+            `The language ${languageId} is not supported by Implicit Parentheses`
+          );
+        }
       }
     },
     null,
@@ -69,24 +81,28 @@ export function activateParens() {
 
 function updateDecorations(
   editor: vscode.TextEditor,
-  decorationType: vscode.TextEditorDecorationType
+  decorationType: vscode.TextEditorDecorationType,
+  outputChannel: vscode.OutputChannel
 ) {
-  const { languageId } = editor.document;
-  if (!SUPPORTED_LANGUAGE_IDS.has(languageId)) {
-    // TODO: Log
-    return;
-  }
+  outputChannel.appendLine("Updating decorations...");
+
   const useFlow: boolean =
     vscode.workspace.getConfiguration().get(USE_FLOW_CONFIG) ?? false;
 
-  const parens = findParens(
-    editor.document.getText(),
-    editor.document.languageId,
-    useFlow
-  );
-  if (parens === null) {
+  let parens: ParenLocations;
+  try {
+    parens = findParens(
+      editor.document.getText(),
+      editor.document.languageId,
+      useFlow
+    );
+  } catch (e) {
+    outputChannel.appendLine(
+      `Encounterd an while parsing ${editor.document.fileName}}: ${String(e)}`
+    );
     return;
   }
+
   const { open, close } = parens;
 
   const decorations: {
