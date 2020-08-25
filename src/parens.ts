@@ -22,6 +22,7 @@ export function activateParens() {
       color: parenColor,
       fontStyle: "normal",
     },
+    rangeBehavior: vscode.DecorationRangeBehavior.ClosedClosed,
   });
 
   subscriptions.push(decorationType);
@@ -66,39 +67,6 @@ export function activateParens() {
   return vscode.Disposable.from(...subscriptions);
 }
 
-// @ts-ignore `enums` are not yet included in the types.
-const FLOW_PLUGINS: ParserPluginWithOptions = [
-  [["flow", { all: true, enums: true }], "jsx"],
-];
-
-function getPlugins(languageId: string): ParserPlugin[] {
-  const useFlow = vscode.workspace.getConfiguration().get(USE_FLOW_CONFIG);
-  switch (languageId) {
-    case "typescript":
-      return ["typescript"];
-    case "typescriptreact":
-      return ["typescript", "jsx"];
-    // The `flow` languageId is used interally at Facebook
-    case "flow":
-      // @ts-ignore `enums` are not yet included in the types.
-      return FLOW_PLUGINS;
-    case "javascriptreact":
-      if (useFlow) {
-        return FLOW_PLUGINS;
-      }
-      return ["jsx"];
-    case "javascript":
-      if (useFlow) {
-        return FLOW_PLUGINS;
-      }
-      return [];
-    default:
-      // TODO: enforce this with types
-      console.warn(`Unexpected languageId: ${languageId}`);
-      return [];
-  }
-}
-
 function updateDecorations(
   editor: vscode.TextEditor,
   decorationType: vscode.TextEditorDecorationType
@@ -108,9 +76,13 @@ function updateDecorations(
     // TODO: Log
     return;
   }
+  const useFlow: boolean =
+    vscode.workspace.getConfiguration().get(USE_FLOW_CONFIG) ?? false;
+
   const parens = findParens(
     editor.document.getText(),
-    getPlugins(editor.document.languageId)
+    editor.document.languageId,
+    useFlow
   );
   if (parens === null) {
     return;

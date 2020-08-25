@@ -4,6 +4,7 @@ import { File as FileAST, Node } from "@babel/types";
 import { ParserOptions, ParserPlugin } from "@babel/parser";
 
 type ParenLocations = Map<number, number>;
+export type Parens = { open: ParenLocations; close: ParenLocations };
 
 const CONFUSING = new Set([
   "BinaryExpression",
@@ -14,7 +15,8 @@ const CONFUSING = new Set([
 
 export function findParens(
   text: string,
-  plugins: ParserPlugin[]
+  languageId: string,
+  useFlow: boolean
 ): { open: ParenLocations; close: ParenLocations } | null {
   const openParens: number[] = [];
   const closeParens: number[] = [];
@@ -29,15 +31,13 @@ export function findParens(
 
   let ast;
   try {
-    ast = parser.parse(
-      text,
-      babelOptions({ sourceType: "unambiguous", extraPlugins: plugins })
-    );
+    ast = parser.parse(text, babelOptions({ languageId, useFlow }));
   } catch (e) {
-    console.error(e);
-    // TODO: Should we clear decorations?
     return null;
   }
+
+  const ASSOCIATIVE_BINARY_OPERATORS = new Set(["+", "*", "&", "|"]);
+  const ASSOCIATIVE_LOGICAL_OPERATORS = new Set(["||", "&&", "??"]);
 
   traverse(ast, {
     enter(path) {
@@ -49,6 +49,20 @@ export function findParens(
         // !! is an idiom that people can figure out
         return;
       }
+      if (
+        path.node.type === path.parent.type &&
+        // @ts-ignore
+        path.node.operator === path.parent.operator
+      ) {
+        if (
+          (path.node.type === "BinaryExpression" &&
+            ASSOCIATIVE_BINARY_OPERATORS.has(path.node.operator)) ||
+          (path.node.type === "LogicalExpression" &&
+            ASSOCIATIVE_LOGICAL_OPERATORS.has(path.node.operator))
+        ) {
+          return;
+        }
+      }
       addParens(path.node);
     },
   });
@@ -57,6 +71,39 @@ export function findParens(
     open: groupLineNumbers(openParens),
     close: groupLineNumbers(closeParens),
   };
+}
+
+// @ts-ignore `enums` are not yet included in the types.
+const FLOW_PLUGINS: ParserPluginWithOptions = [
+  ["flow", { all: true, enums: true }],
+  "jsx",
+];
+
+function getPlugins(languageId: string, useFlow: boolean): ParserPlugin[] {
+  switch (languageId) {
+    case "typescript":
+      return ["typescript"];
+    case "typescriptreact":
+      return ["typescript", "jsx"];
+    // The `flow` languageId is used interally at Facebook
+    case "flow":
+      // @ts-ignore `enums` are not yet included in the types.
+      return FLOW_PLUGINS;
+    case "javascriptreact":
+      if (useFlow) {
+        return FLOW_PLUGINS;
+      }
+      return ["jsx"];
+    case "javascript":
+      if (useFlow) {
+        return FLOW_PLUGINS;
+      }
+      return [];
+    default:
+      // TODO: enforce this with types
+      console.warn(`Unexpected languageId: ${languageId}`);
+      return [];
+  }
 }
 
 function groupLineNumbers(numbers: number[]) {
@@ -74,14 +121,15 @@ function isUnaryNot(node: Node) {
 
 // Stolen from Prettier: https://github.com/prettier/prettier/blob/797e93fc0a3a7f2ba2b510a1a246fc6bdbe89025/src/language-js/parser-babel.js#L18-L41
 function babelOptions({
-  sourceType,
-  extraPlugins = [],
+  languageId,
+  useFlow,
 }: {
-  sourceType: "script" | "module" | "unambiguous";
-  extraPlugins?: ParserPlugin[];
+  languageId: string;
+  useFlow: boolean;
 }): ParserOptions {
+  const extraPlugins = getPlugins(languageId, useFlow);
   return {
-    sourceType,
+    sourceType: "unambiguous",
     allowAwaitOutsideFunction: true,
     allowImportExportEverywhere: true,
     allowReturnOutsideFunction: true,

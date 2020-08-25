@@ -80,7 +80,9 @@
     "lint": "eslint src --ext ts",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
-    "test": "node ./out/test/runTest.js",
+    "test": "node ./out/test/runTest.js && yarn unit",
+    "preunit": "yarn run compile && yarn run lint",
+    "unit": "node ./out/test/runUnitTest.js",
     "package": "vsce package"
   },
   "devDependencies": {
