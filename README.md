@@ -16,7 +16,7 @@ This extension contributes the following settings:
 
 - `implicitParentheses.enable`: Show implicit parentheses
 - `implicitParentheses.showInMenuBar`: Show a button in the menu bar to show/hide implicit parentheses
-- `implicitParentheses.parserConfig`: Paser configuration to use
+- `implicitParentheses.useFlow`: Parse JavaScript files as Flow
 - `implicitParentheses.debounceTimeout`: Number of milliseconds that the plugin will wait after a file changes before it parses the file.
 
 The color of the parentheses can be configured via:
