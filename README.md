@@ -39,4 +39,4 @@ The color of the parentheses can be configured via:
 - Provide automated fixes for adding parens, or even extracting expressions to variables.
 - Use the menu bar item to indicate if parsing has failed.
 - Suggest changing parser when we get a parse error that indicates we're using the wrong parser
-- Use Flow/Typescript parser when possible to get increpental parsing.
+- Use Flow/Typescript parser when possible to get incremental parsing.

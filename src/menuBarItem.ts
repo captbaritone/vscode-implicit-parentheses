@@ -44,15 +44,15 @@ export default class MenuBarItem implements Disposable {
   }
 
   _setText() {
-    const config = workspace.getConfiguration();
-    const icon = config.get(ENABLED_CONFIG) ? STOP : PLAY;
-    const action = config.get(ENABLED_CONFIG) ? "hide" : "show";
+    const enabled = workspace.getConfiguration().get<boolean>(ENABLED_CONFIG);
+    const icon = enabled ? STOP : PLAY;
+    const action = enabled ? "hide" : "show";
     this._statusBarItem.text = `(${icon})`;
     this._statusBarItem.tooltip = `Click to ${action} implicit parentheses.`;
   }
 
   _setVisibility() {
-    if (workspace.getConfiguration().get(MENU_BAR_CONFIG)) {
+    if (workspace.getConfiguration().get<boolean>(MENU_BAR_CONFIG)) {
       this._statusBarItem.show();
     } else {
       this._statusBarItem.hide();
