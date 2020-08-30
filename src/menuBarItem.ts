@@ -1,46 +1,65 @@
-import * as vscode from "vscode";
+import {
+  Disposable,
+  window,
+  StatusBarAlignment,
+  StatusBarItem,
+  workspace,
+  ConfigurationChangeEvent,
+} from "vscode";
 import { ENABLED_CONFIG, TOGGLE_COMMAND, MENU_BAR_CONFIG } from "./constants";
 
-export function activateMenuBarItem(subscriptions: { dispose(): any }[]) {
-  const statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    100
-  );
-  statusBarItem.command = TOGGLE_COMMAND;
+const PLAY = "\u25BA";
+const STOP = "\u25A0";
 
-  const PLAY = "\u25BA";
-  const STOP = "\u25A0";
+export default class MenuBarItem implements Disposable {
+  private readonly _disposables: Disposable[] = [];
+  private readonly _statusBarItem: StatusBarItem;
+  constructor() {
+    this._disposables = [];
+    this._statusBarItem = window.createStatusBarItem(
+      StatusBarAlignment.Left,
+      100 // What should this number be?
+    );
+    this._statusBarItem.command = TOGGLE_COMMAND;
 
-  function setText() {
-    const config = vscode.workspace.getConfiguration();
-    const icon = config.get(ENABLED_CONFIG) ? STOP : PLAY;
-    const action = config.get(ENABLED_CONFIG) ? "hide" : "show";
-    statusBarItem.text = `(${icon})`;
-    statusBarItem.tooltip = `Click to ${action} implicit parentheses.`;
+    this._disposables.push(this._statusBarItem);
+
+    this._setText();
+    this._setVisibility();
+
+    workspace.onDidChangeConfiguration(
+      this._handleConfigChange,
+      this,
+      this._disposables
+    );
   }
 
-  function setVisibility() {
-    if (vscode.workspace.getConfiguration().get(MENU_BAR_CONFIG)) {
-      statusBarItem.show();
-    } else {
-      statusBarItem.hide();
+  _handleConfigChange(event: ConfigurationChangeEvent) {
+    if (event.affectsConfiguration(ENABLED_CONFIG)) {
+      this._setText();
+    }
+    if (event.affectsConfiguration(MENU_BAR_CONFIG)) {
+      this._setVisibility();
     }
   }
 
-  setText();
-  setVisibility();
+  _setText() {
+    const config = workspace.getConfiguration();
+    const icon = config.get(ENABLED_CONFIG) ? STOP : PLAY;
+    const action = config.get(ENABLED_CONFIG) ? "hide" : "show";
+    this._statusBarItem.text = `(${icon})`;
+    this._statusBarItem.tooltip = `Click to ${action} implicit parentheses.`;
+  }
 
-  vscode.workspace.onDidChangeConfiguration(
-    (event) => {
-      if (event.affectsConfiguration(ENABLED_CONFIG)) {
-        setText();
-      }
-      if (event.affectsConfiguration(MENU_BAR_CONFIG)) {
-        setVisibility();
-      }
-    },
-    null,
-    subscriptions
-  );
-  subscriptions.push(statusBarItem);
+  _setVisibility() {
+    if (workspace.getConfiguration().get(MENU_BAR_CONFIG)) {
+      this._statusBarItem.show();
+    } else {
+      this._statusBarItem.hide();
+    }
+  }
+
+  dispose() {
+    this._disposables.forEach((disposable) => disposable.dispose());
+  }
 }

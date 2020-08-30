@@ -29,7 +29,8 @@ function getConfigurationType(
   return vscode.ConfigurationTarget.Global;
 }
 
-export function activateCommands(subscriptions: { dispose(): any }[]) {
+export function activateCommands(): vscode.Disposable {
+  const subscriptions = [];
   subscriptions.push(
     vscode.commands.registerCommand(SHOW_COMMAND, () => {
       const config = vscode.workspace.getConfiguration();
@@ -58,4 +59,6 @@ export function activateCommands(subscriptions: { dispose(): any }[]) {
       );
     })
   );
+
+  return vscode.Disposable.from(...subscriptions);
 }

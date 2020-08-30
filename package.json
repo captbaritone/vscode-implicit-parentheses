@@ -102,9 +102,7 @@
   "dependencies": {
     "@babel/parser": "^7.11.4",
     "@babel/traverse": "^7.11.0",
-    "@types/babel__traverse": "^7.0.13",
-    "@types/lodash": "^4.14.159",
-    "lodash": "^4.17.20"
+    "@types/babel__traverse": "^7.0.13"
   },
   "prettier": {}
 }

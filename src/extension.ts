@@ -1,31 +1,31 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from "vscode";
-import { activateParens } from "./parens";
-import { activateMenuBarItem } from "./menuBarItem";
+import { Disposable, ExtensionContext, workspace } from "vscode";
+import Parens from "./parens";
+import MenuBarItem from "./menuBarItem";
 import { activateCommands } from "./commands";
-import { ENABLED_CONFIG, DEBOUNCE_CONFIG, USE_FLOW_CONFIG } from "./constants";
+import { ENABLED_CONFIG } from "./constants";
 
 // this method is called when vs code is activated
-export function activate(context: vscode.ExtensionContext) {
-  activateMenuBarItem(context.subscriptions);
-  activateCommands(context.subscriptions);
+export function activate(context: ExtensionContext) {
+  context.subscriptions.push(new MenuBarItem());
+  context.subscriptions.push(activateCommands());
 
-  let parens: vscode.Disposable | null = null;
+  let parens: Disposable | null = null;
   function updateParensEnabled() {
     if (parens !== null) {
       parens.dispose();
     }
-    if (vscode.workspace.getConfiguration().get(ENABLED_CONFIG)) {
-      parens = activateParens();
+    if (workspace.getConfiguration().get(ENABLED_CONFIG)) {
+      parens = new Parens();
     } else {
       parens = null;
     }
   }
 
   context.subscriptions.push(
-    new vscode.Disposable(() => {
+    new Disposable(() => {
       if (parens !== null) {
         parens.dispose();
       }
@@ -33,13 +33,9 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   updateParensEnabled();
-  vscode.workspace.onDidChangeConfiguration(
+  workspace.onDidChangeConfiguration(
     (event) => {
-      if (
-        event.affectsConfiguration(USE_FLOW_CONFIG) ||
-        event.affectsConfiguration(ENABLED_CONFIG) ||
-        event.affectsConfiguration(DEBOUNCE_CONFIG)
-      ) {
+      if (event.affectsConfiguration(ENABLED_CONFIG)) {
         updateParensEnabled();
       }
     },

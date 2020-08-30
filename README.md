@@ -31,8 +31,6 @@ The color of the parentheses can be configured via:
 
 ## TODO
 
-- [ ] Hide menu bar item when no js files are visible?
-- [ ] Log to output when parse fails
 - [ ] Correctly handle case where config has been set at the language level.
 
 ## Possible Future Features
