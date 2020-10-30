@@ -8,7 +8,7 @@ When reading complex expressions, it can be hard to understand how the subexpres
 
 ## Installation
 
-Install through VS Code extension marketplace. Search for "Implicit Parenthesese".
+Install through VS Code extension marketplace. Search for "Implicit Parentheses".
 
 ## Command Pallet Commands
 
