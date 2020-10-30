@@ -158,7 +158,7 @@ export default class Parens implements Disposable {
   }
 
   _applyParensToEditor(editor: TextEditor, parenLocations: ParenLocation[]) {
-    const paren = { before: "(", after: ")" };
+    const paren = { before: "₍", after: "₎" };
 
     editor.setDecorations(
       this._decorationType,
