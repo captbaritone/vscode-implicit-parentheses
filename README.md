@@ -1,5 +1,9 @@
 # Show Implicit Parentheses (JavaScript)
 
+![demo video](https://user-images.githubusercontent.com/162735/97759792-f61aec00-1abe-11eb-9ba6-fdfa973bb566.gif)
+
+
+
 Clarify operator precedence by showing implicit parentheses as inline decorations.
 
 When reading complex expressions, it can be hard to understand how the subexpressions will be grouped. This extensions shows you how the sub expression are grouped by visually including the implicit parentheses as decorations.
