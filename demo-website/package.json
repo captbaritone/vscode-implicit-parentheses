@@ -1,0 +1,19 @@
+{
+	"name": "helloworld",
+	"scripts": {
+		"simpleserver": "node ../node_modules/yaserver/bin/yaserver --root ./dist --port 9999",
+		"dev": "parcel src/index.html",
+		"build": "npm run build-index && npm run build-ts && npm run build-worker",
+		"build-index": "parcel build src/index.html --no-optimize",
+		"build-ts": "parcel build node_modules/monaco-editor/esm/vs/language/typescript/ts.worker.js --no-source-maps --no-optimize",
+		"build-worker": "parcel build node_modules/monaco-editor/esm/vs/editor/editor.worker.js --no-source-maps --no-optimize"
+	},
+	"devDependencies": {
+		"monaco-editor": "0.28.1",
+		"parcel": "^2.0.1"
+	},
+	"dependencies": {
+		"@babel/parser": "^7.16.4",
+		"@babel/traverse": "^7.16.3"
+	}
+}
