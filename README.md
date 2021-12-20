@@ -6,6 +6,10 @@ Clarify operator precedence by showing implicit parentheses as inline decoration
 
 When reading complex expressions, it can be hard to understand how the subexpressions will be grouped. This extensions shows you how the sub expression are grouped by visually including the implicit parentheses as decorations.
 
+## Try Online
+
+**[Online Demo](https://capt.dev/parens)**
+
 ## Installation
 
 Install through VS Code extension marketplace. Search for "Implicit Parentheses".
