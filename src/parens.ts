@@ -27,14 +27,21 @@ type ParenLocation = {
   beforeAfter: "before" | "after";
 };
 
+export type ParenStyle = {
+  before: string;
+  after: string;
+};
+
 export default class Parens implements Disposable {
   private readonly _disposables: Disposable[] = [];
   private readonly _decorationType: TextEditorDecorationType;
   private readonly _outputChannel: OutputChannel;
   private _deboucedUpdateDecorations: Debounced<TextEditor>;
   private _parenLocationCache: WeakMap<TextDocument, ParenLocation[]>;
+  private _parenStyle: ParenStyle;
 
-  constructor() {
+  constructor(options: { style?: ParenStyle } = {}) {
+    this._parenStyle = options.style || { before: "₍", after: "₎" };
     this._parenLocationCache = new WeakMap();
     this._decorationType = createDecorationType();
     this._deboucedUpdateDecorations = debounce((editor) => {
@@ -158,8 +165,6 @@ export default class Parens implements Disposable {
   }
 
   _applyParensToEditor(editor: TextEditor, parenLocations: ParenLocation[]) {
-    const paren = { before: "₍", after: "₎" };
-
     editor.setDecorations(
       this._decorationType,
       parenLocations.map(({ count, pos, beforeAfter }) => ({
@@ -168,7 +173,9 @@ export default class Parens implements Disposable {
           editor.document.positionAt(pos)
         ),
         renderOptions: {
-          [beforeAfter]: { contentText: repeat(paren[beforeAfter], count) },
+          [beforeAfter]: {
+            contentText: repeat(this._parenStyle[beforeAfter], count),
+          },
         },
       }))
     );

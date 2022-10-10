@@ -9,6 +9,7 @@ export const ENABLED_CONFIG = "implicitParentheses.enable";
 export const USE_FLOW_CONFIG = "implicitParentheses.useFlow";
 export const DEBOUNCE_CONFIG = "implicitParentheses.debounceTimeout";
 export const MENU_BAR_CONFIG = "implicitParentheses.showInMenuBar";
+export const PAREN_STYLE_CONFIG = "implicitParentheses.parenStyle";
 
 export const SUPPORTED_LANGUAGE_IDS = new Set([
   "javascript",
