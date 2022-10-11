@@ -60,6 +60,15 @@
           "type": "number",
           "default": 500,
           "description": "Number of milliseconds that the plugin will wait after a file changes before it parses the file."
+        },
+        "implicitParentheses.parenStyle": {
+          "type": "string",
+          "description": "Control how the parentheses appear.",
+          "default": "tiny",
+          "enum": [
+            "big",
+            "tiny"
+          ]
         }
       }
     },

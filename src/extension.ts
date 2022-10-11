@@ -5,7 +5,7 @@ import { Disposable, ExtensionContext, workspace } from "vscode";
 import Parens from "./parens";
 import MenuBarItem from "./menuBarItem";
 import { activateCommands } from "./commands";
-import { ENABLED_CONFIG } from "./constants";
+import { ENABLED_CONFIG, PAREN_STYLE_CONFIG } from "./constants";
 
 // this method is called when vs code is activated
 export function activate(context: ExtensionContext) {
@@ -18,7 +18,10 @@ export function activate(context: ExtensionContext) {
       parens.dispose();
     }
     if (workspace.getConfiguration().get(ENABLED_CONFIG)) {
-      parens = new Parens();
+      const parenStyle = workspace.getConfiguration().get(PAREN_STYLE_CONFIG);
+      parens = new Parens({
+        style: parenStyle === "big" ? { before: "(", after: ")" } : undefined,
+      });
     } else {
       parens = null;
     }
